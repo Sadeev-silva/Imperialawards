@@ -4,12 +4,20 @@ import pandas as pd
 # Load the guest list
 @st.cache_data
 def load_data():
+    # Read the file
     df = pd.read_csv('seating_list.csv')
-    df['First Name'] = df['First Name'].str.strip()
-    df['Last Name'] = df['Last Name'].str.strip()
-    # Force numbers to integers to remove decimals
-    df['Table Number'] = df['Table Number'].astype(int)
-    df['Seat Number'] = df['Seat Number'].astype(int)
+    
+    # Remove rows where the name is missing
+    df = df.dropna(subset=['First Name', 'Last Name'])
+    
+    # Clean strings and ensure names are treated as text
+    df['First Name'] = df['First Name'].astype(str).str.strip()
+    df['Last Name'] = df['Last Name'].astype(str).str.strip()
+    
+    # Safely convert numbers to integers, replacing errors with 0
+    df['Table Number'] = pd.to_numeric(df['Table Number'], errors='coerce').fillna(0).astype(int)
+    df['Seat Number'] = pd.to_numeric(df['Seat Number'], errors='coerce').fillna(0).astype(int)
+    
     return df
 
 df = load_data()
@@ -25,7 +33,7 @@ last_name = st.text_input("Last Name").strip()
 
 if st.button("Find My Table"):
     if first_name and last_name:
-        # Search for the guest
+        # Search for the guest (case-insensitive)
         match = df[
             (df['First Name'].str.lower() == first_name.lower()) & 
             (df['Last Name'].str.lower() == last_name.lower())
@@ -40,7 +48,6 @@ if st.button("Find My Table"):
             seat_fmt = f"{seat:02d}"
             
             st.success(f"Welcome, {first_name}!")
-            # Simple, clean display
             st.subheader(f"Table {table_fmt} — Seat {seat_fmt}")
         else:
             st.error("Name not found. Please check your spelling.")
