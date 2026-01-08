@@ -27,7 +27,7 @@ if os.path.exists('logo.png'):
 else:
     st.info("Logo file 'logo.png' not found. Please check the filename in GitHub.")
 
-st.title("Imperial Awards and Gala 2025")
+st.title("Imperial Excellence Awards and Gala 2025")
 st.write("Enter your name to find your table.")
 
 # 2. INPUT FIELDS
@@ -59,3 +59,4 @@ if st.button("Find My Table"):
 
 st.markdown("---")
 st.caption("10th January 2025 | Shangri-La Colombo")
+
